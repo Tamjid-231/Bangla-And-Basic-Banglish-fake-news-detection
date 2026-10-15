@@ -17,7 +17,6 @@ A model prediction is not proof that a real-world claim is true or false, so the
 **Academic project:** Capstone 2 Final Project
 
 - **Md. Tamjid Hossain** — 231612038
-- **Mohima Akther** — 231592038
 
 ## What we completed
 
@@ -192,4 +191,3 @@ Project source code is available under the [MIT Licence](LICENSE). Dataset recor
 <strong>Author: Md. Tamjid Hossain</strong>
 </p>
 # Bangla-And-Banglish-Fake-News-Dectection-With-Web-Evidence
-# Bangla-And-Basic-Banglish-fake-news-detection
