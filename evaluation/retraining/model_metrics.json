@@ -1,0 +1,279 @@
+{
+  "model_version": "BanFakeNews-2.0 hybrid TF-IDF LinearSVC",
+  "dataset": {
+    "source_rows": 61581,
+    "usable_rows": 57908,
+    "duplicates_removed": 3671,
+    "fake_rows": 9393,
+    "real_rows": 48515
+  },
+  "rows_used_for_this_run": 57908,
+  "dataset_doi": "10.17632/kjh887ct4j.1",
+  "split": "stratified 70/15/15",
+  "random_state": 42,
+  "comparison_results": {
+    "Multinomial Naive Bayes": {
+      "validation": {
+        "accuracy": 0.9289743294578106,
+        "macro_f1": 0.8484614746303656,
+        "fake_precision": 0.9186046511627907,
+        "fake_recall": 0.6167494677075941,
+        "fake_f1": 0.738004246284501,
+        "real_f1": 0.9589187029762302,
+        "confusion_matrix": [
+          [
+            869,
+            540
+          ],
+          [
+            77,
+            7201
+          ]
+        ]
+      },
+      "test": {
+        "accuracy": 0.9316219638540347,
+        "macro_f1": 0.8559110750211663,
+        "fake_precision": 0.9153924566768603,
+        "fake_recall": 0.6373314407381121,
+        "fake_f1": 0.7514644351464436,
+        "real_f1": 0.960357714895889,
+        "confusion_matrix": [
+          [
+            898,
+            511
+          ],
+          [
+            83,
+            7195
+          ]
+        ]
+      }
+    },
+    "Logistic Regression": {
+      "validation": {
+        "accuracy": 0.9308161620812708,
+        "macro_f1": 0.8745426782197554,
+        "fake_precision": 0.7767123287671233,
+        "fake_recall": 0.8048261178140526,
+        "fake_f1": 0.7905193447194144,
+        "real_f1": 0.9585660117200965,
+        "confusion_matrix": [
+          [
+            1134,
+            275
+          ],
+          [
+            326,
+            6952
+          ]
+        ]
+      },
+      "test": {
+        "accuracy": 0.936802118107517,
+        "macro_f1": 0.8840307312678767,
+        "fake_precision": 0.8032440056417489,
+        "fake_recall": 0.808374733853797,
+        "fake_f1": 0.8058012026883622,
+        "real_f1": 0.9622602598473912,
+        "confusion_matrix": [
+          [
+            1139,
+            270
+          ],
+          [
+            279,
+            6999
+          ]
+        ]
+      }
+    },
+    "Word-only Linear SVM": {
+      "feature_kind": "word",
+      "selected_threshold_before_alignment": 0.035,
+      "validation_macro_f1_at_threshold": 0.8790211683589321,
+      "validation": {
+        "accuracy": 0.9348451709450903,
+        "macro_f1": 0.8790211683589321,
+        "fake_precision": 0.8061002178649237,
+        "fake_recall": 0.7877927608232789,
+        "fake_f1": 0.7968413496051687,
+        "real_f1": 0.9612009871126954,
+        "confusion_matrix": [
+          [
+            1110,
+            299
+          ],
+          [
+            267,
+            7011
+          ]
+        ]
+      },
+      "test": {
+        "accuracy": 0.9350754000230229,
+        "macro_f1": 0.8794486553965329,
+        "fake_precision": 0.8068264342774146,
+        "fake_recall": 0.7885024840312278,
+        "fake_f1": 0.797559224694903,
+        "real_f1": 0.9613380860981628,
+        "confusion_matrix": [
+          [
+            1111,
+            298
+          ],
+          [
+            266,
+            7012
+          ]
+        ]
+      },
+      "headline_test": {
+        "accuracy": 0.8281339933233567,
+        "macro_f1": 0.7257361711540111,
+        "fake_precision": 0.47868020304568526,
+        "fake_recall": 0.6692689850958127,
+        "fake_f1": 0.5581532997928381,
+        "real_f1": 0.893319042515184,
+        "confusion_matrix": [
+          [
+            943,
+            466
+          ],
+          [
+            1027,
+            6251
+          ]
+        ]
+      }
+    },
+    "Character-only Linear SVM": {
+      "feature_kind": "character",
+      "selected_threshold_before_alignment": 0.02,
+      "validation_macro_f1_at_threshold": 0.8703029744128044,
+      "validation": {
+        "accuracy": 0.9257511223667549,
+        "macro_f1": 0.8703029744128044,
+        "fake_precision": 0.7390488110137672,
+        "fake_recall": 0.8381831085876508,
+        "fake_f1": 0.7855004988360492,
+        "real_f1": 0.9551054499895594,
+        "confusion_matrix": [
+          [
+            1181,
+            228
+          ],
+          [
+            417,
+            6861
+          ]
+        ]
+      },
+      "test": {
+        "accuracy": 0.9316219638540347,
+        "macro_f1": 0.8799573380411678,
+        "fake_precision": 0.7580747308423053,
+        "fake_recall": 0.8495386799148332,
+        "fake_f1": 0.8012048192771084,
+        "real_f1": 0.9587098568052274,
+        "confusion_matrix": [
+          [
+            1197,
+            212
+          ],
+          [
+            382,
+            6896
+          ]
+        ]
+      },
+      "headline_test": {
+        "accuracy": 0.8466674340969265,
+        "macro_f1": 0.7585985927011393,
+        "fake_precision": 0.5189561792220581,
+        "fake_recall": 0.7480482611781405,
+        "fake_f1": 0.6127906976744186,
+        "real_f1": 0.9044064877278599,
+        "confusion_matrix": [
+          [
+            1054,
+            355
+          ],
+          [
+            977,
+            6301
+          ]
+        ]
+      }
+    },
+    "Hybrid Linear SVM": {
+      "feature_kind": "hybrid",
+      "selected_threshold_before_alignment": 0.05,
+      "validation_macro_f1_at_threshold": 0.8941097071642086,
+      "validation": {
+        "accuracy": 0.9422125014389318,
+        "macro_f1": 0.8941097071642086,
+        "fake_precision": 0.8186929023190442,
+        "fake_recall": 0.8268275372604684,
+        "fake_f1": 0.8227401129943502,
+        "real_f1": 0.9654793013340668,
+        "confusion_matrix": [
+          [
+            1165,
+            244
+          ],
+          [
+            258,
+            7020
+          ]
+        ]
+      },
+      "test": {
+        "accuracy": 0.9408311269713365,
+        "macro_f1": 0.8910198321578919,
+        "fake_precision": 0.8185053380782918,
+        "fake_recall": 0.8161816891412349,
+        "fake_f1": 0.8173418621179815,
+        "real_f1": 0.9646978021978022,
+        "confusion_matrix": [
+          [
+            1150,
+            259
+          ],
+          [
+            255,
+            7023
+          ]
+        ]
+      },
+      "headline_test": {
+        "accuracy": 0.8793599631633475,
+        "macro_f1": 0.7912914380663045,
+        "fake_precision": 0.6103975535168196,
+        "fake_recall": 0.7083037615330021,
+        "fake_f1": 0.6557161629434954,
+        "real_f1": 0.9268667131891137,
+        "confusion_matrix": [
+          [
+            998,
+            411
+          ],
+          [
+            637,
+            6641
+          ]
+        ]
+      }
+    }
+  },
+  "selected_model": "Hybrid Linear SVM",
+  "selection_metric": "validation macro F1",
+  "deployed_model": "Hybrid Linear SVM",
+  "rq1_comparison": "word-only vs character-only vs hybrid Linear SVM",
+  "deployed_threshold": 0.5,
+  "limitations": [
+    "The model classifies language patterns; it does not verify facts.",
+    "Banglish evaluation uses a controlled transliterated set, not a naturally collected or human-reviewed Banglish dataset.",
+    "A random split may not represent future news or completely new sources."
+  ]
+}

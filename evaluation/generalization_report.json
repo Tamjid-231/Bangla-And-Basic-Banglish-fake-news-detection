@@ -1,0 +1,34 @@
+{
+  "evaluation_type": "controlled differently-distributed short-claim check",
+  "in_sample_test": {
+    "cases": 8687,
+    "accuracy": 0.9408311269713365,
+    "macro_f1": 0.8910198321578919
+  },
+  "distribution_shift_test": {
+    "cases": 15,
+    "accuracy": 0.4666666666666667,
+    "macro_f1": 0.4642857142857143,
+    "fake_f1": 0.42857142857142855,
+    "real_f1": 0.5,
+    "by_language": {
+      "bn": {
+        "cases": 7,
+        "accuracy": 0.42857142857142855,
+        "macro_f1": 0.3,
+        "fake_f1": 0.0,
+        "real_f1": 0.6
+      },
+      "en": {
+        "cases": 8,
+        "accuracy": 0.5,
+        "macro_f1": 0.4666666666666667,
+        "fake_f1": 0.6,
+        "real_f1": 0.3333333333333333
+      }
+    },
+    "development_text_overlap": 0
+  },
+  "accuracy_drop": 0.47416446030466985,
+  "scope_note": "This is a small controlled short-claim distribution shift, not a publisher-based, time-based, or independently collected external dataset."
+}

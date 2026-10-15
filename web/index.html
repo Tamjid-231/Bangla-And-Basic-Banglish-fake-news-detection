@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bangla Fake News - Model Prediction</title>
+    <style>
+      html { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; font-family: Inter, "Segoe UI", Arial, sans-serif; color: #f4f8ff; background: linear-gradient(180deg, rgba(6, 23, 43, 0.2), #06172b 68%), radial-gradient(circle at 85% 10%, rgba(61, 141, 255, 0.22), transparent 35%), radial-gradient(circle at 10% 90%, rgba(94, 231, 245, 0.12), transparent 30%), #06172b; }
+
+      .shell { width: 100%; margin: 0; padding: 0; display: grid; gap: 3px; }
+      .navbar { display: flex; justify-content: space-between; gap: 24px; align-items: center; padding: 15px 22px; border: 1px solid rgba(255,255,255,0.12); border-radius: 5px; background: rgba(11,34,59,0.92); color: #f4f8ff; box-shadow: 0 14px 40px rgba(0,0,0,0.16); }
+      .navbar, footer { margin-inline: 0; }
+      .brand { font-weight: 800; letter-spacing: 0.03em; }
+      .brand span { color: #5ee7f5; }
+      .phase { color: #a8bad0; font-size: 0.88rem; border: 1px solid rgba(255,255,255,0.12); padding: 8px 12px; border-radius: 5px; }
+      .header-actions { display: flex; align-items: center; gap: 10px; }
+      #closeApp { color: #ffd2cf; background: rgba(255,126,121,0.12); border: 1px solid rgba(255,126,121,0.35); white-space: nowrap; }
+
+      main { display: block; padding: 0; border: 0; border-radius: 5px; background: transparent; }
+      .first-view { display: grid; grid-template-columns: minmax(390px, 0.9fr) minmax(560px, 1.1fr); gap: 24px; align-items: stretch; }
+      .hero { display: flex; flex-direction: column; justify-content: flex-start; min-width: 0; }
+      .intro { min-width: 0; }
+      .eyebrow { color: #5ee7f5; font-weight: 800; letter-spacing: 0.12em; font-size: 0.76rem; }
+      h1 { color: #f4f8ff; font-size: clamp(2.45rem, 4vw, 3.9rem); line-height: 1.03; letter-spacing: -0.035em; margin: 18px 0; max-width: 720px; }
+      .lede { color: #a8bad0; font-size: 1.06rem; line-height: 1.68; max-width: 680px; }
+
+      .hero-summary { flex: 1; display: flex; flex-direction: column; margin-top: 24px; padding: 19px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.12); background: rgba(11,34,59,0.68); }
+      .status-row { flex: 1; display: grid; grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+      .status { display: flex; flex-direction: column; justify-content: center; border-left: 3px solid #5ee7f5; background: rgba(255,255,255,0.055); padding: 14px 16px; border-radius: 0 5px 5px 0; }
+      .status strong { display: block; margin-bottom: 4px; }
+      .status small { color: #a8bad0; }
+
+      .card { background: linear-gradient(145deg, rgba(16,45,76,0.96), rgba(8,29,51,0.96)); border: 1px solid rgba(255,255,255,0.12); border-radius: 5px; padding: 26px; box-shadow: 0 24px 70px rgba(0,0,0,0.25); }
+      .hero.card, .workspace { padding: 30px; }
+      .workspace { display: flex; flex-direction: column; }
+      .workspace-heading { display: block; margin-bottom: 16px; }
+      .workspace-heading h2 { margin: 7px 0 0; color: #f4f8ff; font-size: clamp(1.45rem, 2.5vw, 2rem); }
+      .workspace-heading p { max-width: 620px; margin: 8px 0 0; color: #a8bad0; line-height: 1.5; text-align: left; font-size: 0.93rem; }
+      label { display: block; font-weight: 700; margin-bottom: 10px; }
+      textarea { width: 100%; min-height: 320px; max-height: none; flex: 1 1 320px; overflow-y: auto; resize: vertical; border: 1px solid rgba(255,255,255,0.12); border-radius: 5px; padding: 18px; background: rgba(3,17,32,0.78); color: #f4f8ff; font: inherit; line-height: 1.65; }
+      textarea:focus { outline: 2px solid rgba(94,231,245,0.45); border-color: #5ee7f5; }
+      .text-meta { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; color: #a8bad0; font-size: 0.78rem; }
+      .form-footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 12px; }
+      .form-footer .text-meta { flex: 1; margin-top: 0; }
+      .actions { display: flex; gap: 10px; min-width: 330px; }
+      button { border: 0; border-radius: 5px; padding: 12px 18px; font: inherit; font-weight: 800; cursor: pointer; }
+      #predictBtn { color: #03111f; background: linear-gradient(90deg, #5ee7f5, #a1f3fa); flex: 1; }
+      #clearBtn { color: #f4f8ff; background: rgba(255,255,255,0.08); }
+      button:disabled { opacity: 0.55; cursor: wait; }
+
+      .samples { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1); }
+      .samples p { color: #a8bad0; font-size: 0.85rem; margin: 0 5px 0 0; }
+      .sample { background: transparent; border: 1px solid rgba(255,255,255,0.12); color: #a8bad0; padding: 8px 10px; margin: 0 6px 6px 0; font-size: 0.82rem; }
+
+      .modal-backdrop { position: fixed; inset: 0; z-index: 20; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(31, 49, 68, 0.56); backdrop-filter: blur(6px); }
+      .modal-backdrop.visible { display: flex; }
+      body.modal-open { overflow: hidden; }
+      .result-modal { width: min(760px, 100%); max-height: calc(100vh - 40px); overflow-y: auto; background: linear-gradient(145deg, #102d4c, #081d33); border: 1px solid rgba(255,255,255,0.16); border-radius: 5px; padding: 26px; color: #f4f8ff; box-shadow: 0 30px 90px rgba(0,0,0,0.48); }
+      .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+      .modal-header h2 { margin: 4px 0 0; font-size: 1.65rem; }
+      .modal-close { width: 42px; height: 42px; flex: 0 0 auto; padding: 0; color: #f4f8ff; background: rgba(255,255,255,0.08); font-size: 1.35rem; }
+      .result-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .metric { background: rgba(255,255,255,0.055); padding: 16px; border-radius: 5px; }
+      .metric span { color: #a8bad0; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
+      .metric strong { display: block; font-size: 1.55rem; margin-top: 7px; }
+      #prediction.real, #evidenceStatus.supporting { color: #5ee7f5; }
+      #prediction.fake, #evidenceStatus.conflicting { color: #ff7e79; }
+      #evidenceStatus.limited, #evidenceStatus.insufficient, #evidenceStatus.unavailable { color: #ffd384; }
+      .note { color: #a8bad0; line-height: 1.55; margin: 16px 0 0; font-size: 0.9rem; }
+      .overall { margin: 16px 0 0; padding: 14px 16px; border-left: 3px solid #3d8dff; background: rgba(61,141,255,0.1); line-height: 1.55; }
+      .sources { margin-top: 20px; }
+      .sources h3 { margin: 0 0 10px; font-size: 1rem; }
+      .sources ul { list-style: none; display: grid; gap: 10px; margin: 0; padding: 0; }
+      .sources li { color: #a8bad0; margin: 0; padding: 13px 15px; line-height: 1.5; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 5px; transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease; }
+      .sources li:hover { background: rgba(94,231,245,0.08); border-color: rgba(94,231,245,0.4); transform: translateY(-1px); }
+      .sources a { display: block; color: #5ee7f5; text-decoration: none; overflow-wrap: anywhere; }
+      .sources a:hover { text-decoration: underline; }
+      #error { color: #ffd2cf; margin-top: 14px; min-height: 1.3em; }
+
+      .research { margin-top: 24px; padding: 30px; }
+      .research h2 { margin: 0 0 8px; color: #f4f8ff; font-size: 1.55rem; }
+      .research-copy { color: #a8bad0; line-height: 1.6; margin: 0 0 18px; }
+      .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+      .summary-card { background: rgba(255,255,255,0.055); padding: 15px; border-radius: 5px; }
+      .summary-card span { display: block; color: #a8bad0; font-size: 0.78rem; margin-bottom: 7px; }
+      .summary-card strong { color: #5ee7f5; font-size: 1.15rem; }
+      .table-wrap { overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; min-width: 680px; }
+      th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+      th { color: #a8bad0; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; }
+      td { font-size: 0.9rem; }
+      tr.selected td:first-child { color: #5ee7f5; font-weight: 800; }
+
+      footer { padding: 16px 22px; border: 1px solid rgba(255,255,255,0.12); border-radius: 5px; background: rgba(11,34,59,0.88); color: #a8bad0; font-size: 0.84rem; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+
+      @media (max-width: 940px) {
+        .first-view { grid-template-columns: 1fr; gap: 20px; }
+        .hero-summary { max-width: 620px; }
+        .form-footer { align-items: stretch; flex-direction: column; }
+        .actions { min-width: 0; }
+        textarea { flex-basis: 300px; }
+        .summary-grid { grid-template-columns: 1fr 1fr; }
+        .navbar, footer { align-items: flex-start; flex-direction: column; }
+        .header-actions { width: 100%; justify-content: space-between; }
+      }
+      @media (max-width: 560px) {
+        .shell { width: 100%; }
+        main { padding: 0; }
+        .navbar, footer { margin-inline: 0; }
+        .hero { padding: 24px 0 4px; }
+        .workspace, .research { padding: 20px; }
+        .actions { flex-direction: column; }
+        .result-grid, .summary-grid { grid-template-columns: 1fr; }
+        .result-modal { padding: 20px; }
+        textarea { min-height: 270px; flex-basis: 270px; }
+        .text-meta { align-items: flex-start; flex-direction: column; gap: 4px; }
+        .samples { align-items: stretch; flex-direction: column; }
+        .sample { width: 100%; margin: 0; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <nav class="navbar" aria-label="Application navigation">
+        <div class="brand">BANGLA <span>FAKE NEWS</span> DETECTION</div>
+        <div class="header-actions">
+          <div class="phase">Capstone Model Project</div>
+          <button id="closeApp" type="button" disabled>Close Application</button>
+        </div>
+      </nav>
+
+      <main>
+        <div class="first-view">
+          <section class="card hero">
+            <div class="intro">
+              <div class="eyebrow">CAPSTONE MODEL PROJECT</div>
+              <h1>Bangla and Basic Banglish Fake News Detection with Web Evidence.</h1>
+              <p class="lede">For this project, we trained a Hybrid word + character TF-IDF Linear SVM. We can test it here with Bangla or basic Banglish text.</p>
+            </div>
+            <aside class="hero-summary" aria-label="Project model summary">
+              <div class="eyebrow">PROJECT SNAPSHOT</div>
+              <div class="status-row">
+                <div class="status"><strong>Final model</strong><small>Hybrid TF-IDF + LinearSVC</small></div>
+                <div class="status"><strong>Model comparison</strong><small>MNB, LR, and three SVM variants</small></div>
+              </div>
+            </aside>
+          </section>
+
+          <section class="card workspace" aria-label="Prediction form">
+            <div class="workspace-heading">
+              <div>
+                <div class="eyebrow">LIVE MODEL TEST</div>
+                <h2>Check a news text</h2>
+              </div>
+              <p>Paste a Bangla or basic Banglish headline, claim, or article to review the model result and matching web evidence.</p>
+            </div>
+            <label for="newsText">Enter a Bangla or Banglish headline, claim, or article</label>
+            <textarea id="newsText" placeholder="এখানে সংবাদ বা দাবি লিখুন..."></textarea>
+            <div class="form-footer">
+              <div class="text-meta">
+                <span id="textCount" aria-live="polite">0 characters</span>
+                <span>Long text scrolls inside the box</span>
+              </div>
+              <div class="actions">
+                <button id="predictBtn" type="button">Run Model Prediction</button>
+                <button id="clearBtn" type="button">Clear</button>
+              </div>
+            </div>
+            <div class="samples">
+              <p>Quick samples</p>
+              <button class="sample" data-text="সরকার নতুন শিক্ষা নীতি ঘোষণা করেছে">Bangla sample</button>
+              <button class="sample" data-text="breaking khobor sorkar notun niti ghoshona koreche">Banglish sample</button>
+            </div>
+            <div id="error" role="alert"></div>
+          </section>
+        </div>
+      <section class="card research" aria-label="Model evaluation summary">
+        <h2>Model comparison</h2>
+        <p class="research-copy">We tested every model on the same stratified split and selected the final model using validation macro F1. The table shows our held-out test results.</p>
+        <div class="summary-grid">
+          <div class="summary-card"><span>Usable rows</span><strong id="usableRows">-</strong></div>
+          <div class="summary-card"><span>Selected model</span><strong id="selectedModel">-</strong></div>
+          <div class="summary-card"><span>Article accuracy</span><strong id="articleAccuracy">-</strong></div>
+          <div class="summary-card"><span>Headline accuracy</span><strong id="headlineAccuracy">-</strong></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Model</th><th>Validation macro F1</th><th>Test accuracy</th><th>Test macro F1</th><th>Fake-class F1</th></tr></thead>
+            <tbody id="comparisonBody"><tr><td colspan="5">Loading saved evaluation...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+      </main>
+
+      <footer>
+        <span>Md. Tamjid Hossain - 231612038 &nbsp;|&nbsp; Mohima Akther - 231592038</span>
+        <span>&copy; 2026 Md. Tamjid Hossain. All rights reserved.</span>
+      </footer>
+    </div>
+
+    <div id="resultBackdrop" class="modal-backdrop" aria-hidden="true">
+      <section id="result" class="result-modal" role="dialog" aria-modal="true" aria-labelledby="resultTitle" aria-describedby="resultMessage" tabindex="-1">
+        <div class="modal-header">
+          <div>
+            <div class="eyebrow">PREDICTION RESULT</div>
+            <h2 id="resultTitle">Model and web-evidence summary</h2>
+          </div>
+          <button id="closeResult" class="modal-close" type="button" aria-label="Close result popup">&times;</button>
+        </div>
+        <div class="result-grid" aria-live="polite">
+          <div class="metric"><span>Model prediction</span><strong id="prediction">-</strong></div>
+          <div class="metric"><span>Decision score</span><strong id="score">-</strong></div>
+          <div class="metric"><span>Decision threshold</span><strong id="threshold">-</strong></div>
+          <div class="metric"><span>Web-evidence status</span><strong id="evidenceStatus">-</strong></div>
+          <div class="metric"><span>Trusted sources</span><strong id="trustedSources">-</strong></div>
+          <div class="metric"><span>Overall guidance</span><strong id="overallStatus">-</strong></div>
+        </div>
+        <p class="overall" id="evidenceNote"></p>
+        <p class="note" id="resultMessage"></p>
+        <div class="sources">
+          <h3>Matching sources</h3>
+          <ul id="sourceList"><li>No matching source is available for this result.</li></ul>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const text = document.querySelector("#newsText");
+      const textCount = document.querySelector("#textCount");
+      const predictBtn = document.querySelector("#predictBtn");
+      const clearBtn = document.querySelector("#clearBtn");
+      const closeApp = document.querySelector("#closeApp");
+      const result = document.querySelector("#result");
+      const resultBackdrop = document.querySelector("#resultBackdrop");
+      const closeResult = document.querySelector("#closeResult");
+      const prediction = document.querySelector("#prediction");
+      const score = document.querySelector("#score");
+      const threshold = document.querySelector("#threshold");
+      const evidenceStatus = document.querySelector("#evidenceStatus");
+      const trustedSources = document.querySelector("#trustedSources");
+      const overallStatus = document.querySelector("#overallStatus");
+      const evidenceNote = document.querySelector("#evidenceNote");
+      const resultMessage = document.querySelector("#resultMessage");
+      const sourceList = document.querySelector("#sourceList");
+      const error = document.querySelector("#error");
+      let latestPredictionRequest = 0;
+      let shutdownToken = "";
+      let allowPageExit = false;
+      const pageId = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
+
+      const percent = (value) => `${(Number(value) * 100).toFixed(2)}%`;
+      const readable = (value) => String(value || "unavailable").replaceAll("_", " ");
+
+      function updateTextCount() {
+        const count = text.value.length;
+        textCount.textContent = `${count.toLocaleString()} ${count === 1 ? "character" : "characters"}`;
+      }
+
+      function closeResultPopup() {
+        resultBackdrop.classList.remove("visible");
+        resultBackdrop.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("modal-open");
+        predictBtn.focus();
+      }
+
+      function openResultPopup() {
+        resultBackdrop.classList.add("visible");
+        resultBackdrop.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+        result.focus();
+      }
+
+      function renderSources(items, evidenceUnavailable = false) {
+        sourceList.replaceChildren();
+        if (!Array.isArray(items) || items.length === 0) {
+          const item = document.createElement("li");
+          item.textContent = evidenceUnavailable
+            ? "Web evidence is unavailable. Check your internet connection and try again."
+            : "No sufficiently matching source was found.";
+          sourceList.appendChild(item);
+          return;
+        }
+        items.forEach((source) => {
+          const item = document.createElement("li");
+          const label = source.display_label || `${source.title || "Untitled report"}${source.source ? ` - ${source.source}` : ""}`;
+          let safeUrl = null;
+          try {
+            const candidate = new URL(String(source.url || ""), window.location.href);
+            if (["http:", "https:"].includes(candidate.protocol)) safeUrl = candidate.href;
+          } catch {
+            safeUrl = null;
+          }
+          if (safeUrl) {
+            const link = document.createElement("a");
+            link.href = safeUrl;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = label;
+            item.appendChild(link);
+          } else {
+            item.textContent = label;
+          }
+          sourceList.appendChild(item);
+        });
+      }
+
+      function renderEvidence(evidence) {
+        evidenceStatus.textContent = evidence.category === "unavailable"
+          ? "CHECK INTERNET CONNECTION"
+          : readable(evidence.status).toUpperCase();
+        evidenceStatus.className = String(evidence.category || "unavailable").toLowerCase();
+        trustedSources.textContent = String(evidence.trusted_source_count ?? 0);
+        overallStatus.textContent = readable(evidence.overall).toUpperCase();
+        evidenceNote.textContent = evidence.note || "Web evidence is not available for this result.";
+        renderSources(evidence.results, evidence.category === "unavailable");
+      }
+
+      function showEvidenceLoading() {
+        evidenceStatus.textContent = "CHECKING...";
+        evidenceStatus.className = "limited";
+        trustedSources.textContent = "-";
+        overallStatus.textContent = "WAITING";
+        evidenceNote.textContent = "Checking live news sources in the background...";
+        sourceList.replaceChildren();
+        const item = document.createElement("li");
+        item.textContent = "Checking web sources...";
+        sourceList.appendChild(item);
+      }
+
+      async function loadEvidence(value, modelPrediction, requestId) {
+        try {
+          const response = await fetch("/evidence", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: value, prediction: modelPrediction }),
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || "Web evidence failed.");
+          if (requestId === latestPredictionRequest) renderEvidence(data.web_evidence || {});
+        } catch {
+          if (requestId !== latestPredictionRequest) return;
+          renderEvidence({
+            category: "unavailable",
+            status: "web_search_unavailable",
+            overall: "unverified",
+            note: "Web evidence is unavailable. Check your internet connection and try again. The model prediction is still available.",
+            trusted_source_count: 0,
+            results: [],
+          });
+        }
+      }
+
+      async function closeApplication() {
+        if (!shutdownToken) return;
+        const shouldClose = window.confirm("Close the application and stop the local server?");
+        if (!shouldClose) return;
+        closeApp.disabled = true;
+        closeApp.textContent = "Closing...";
+        try {
+          const response = await fetch("/shutdown", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Local-App-Action": "close",
+              "X-Shutdown-Token": shutdownToken,
+            },
+            body: "{}",
+          });
+          if (!response.ok) throw new Error("Server shutdown failed.");
+          allowPageExit = true;
+          document.body.innerHTML = '<main class="shell"><section class="card"><h1>Application closed</h1><p class="lede">The local server has stopped. You can close this tab safely.</p></section></main>';
+          window.close();
+        } catch {
+          closeApp.disabled = false;
+          closeApp.textContent = "Close Application";
+          error.textContent = "The application could not close the local server. Please try again.";
+        }
+      }
+
+      async function loadProjectInfo() {
+        const body = document.querySelector("#comparisonBody");
+        try {
+          const response = await fetch("/project-info");
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || "Evaluation report unavailable.");
+          document.querySelector("#usableRows").textContent = Number(data.dataset.usable_rows).toLocaleString();
+          document.querySelector("#selectedModel").textContent = data.selected_model;
+          const selected = data.comparison_results[data.selected_model];
+          document.querySelector("#articleAccuracy").textContent = percent(selected.test.accuracy);
+          document.querySelector("#headlineAccuracy").textContent = percent(selected.headline_test.accuracy);
+          body.replaceChildren();
+          Object.entries(data.comparison_results).forEach(([name, result]) => {
+            const row = document.createElement("tr");
+            if (name === data.selected_model) row.className = "selected";
+            const values = [
+              `${name}${name === data.selected_model ? " (selected)" : ""}`,
+              percent(result.validation.macro_f1),
+              percent(result.test.accuracy),
+              percent(result.test.macro_f1),
+              percent(result.test.fake_f1),
+            ];
+            values.forEach((value) => {
+              const cell = document.createElement("td");
+              cell.textContent = value;
+              row.appendChild(cell);
+            });
+            body.appendChild(row);
+          });
+        } catch (err) {
+          const row = document.createElement("tr");
+          const cell = document.createElement("td");
+          cell.colSpan = 5;
+          cell.textContent = err instanceof Error ? err.message : "Evaluation report unavailable.";
+          row.appendChild(cell);
+          body.replaceChildren(row);
+        }
+      }
+
+      async function loadSessionInfo() {
+        try {
+          const response = await fetch(`/session-info?page_id=${encodeURIComponent(pageId)}`, { cache: "no-store" });
+          const data = await response.json();
+          if (!response.ok || !data.shutdown_token) throw new Error("Session unavailable.");
+          shutdownToken = String(data.shutdown_token);
+          closeApp.disabled = false;
+        } catch {
+          closeApp.disabled = true;
+          closeApp.title = "The local server session is unavailable.";
+        }
+      }
+
+      function requestBrowserCloseShutdown() {
+        if (allowPageExit || !shutdownToken) return;
+        void fetch("/browser-close", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Local-App-Action": "browser-close",
+            "X-Shutdown-Token": shutdownToken,
+          },
+          body: JSON.stringify({ page_id: pageId }),
+          keepalive: true,
+        }).catch(() => {});
+      }
+
+      async function predict() {
+        error.textContent = "";
+        closeResultPopup();
+        const value = text.value.trim();
+        if (!value) { error.textContent = "Please enter news text first."; return; }
+        predictBtn.disabled = true;
+        predictBtn.textContent = "Running model...";
+        const requestId = ++latestPredictionRequest;
+        try {
+          const response = await fetch("/predict", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: value }) });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || "Prediction failed.");
+          prediction.textContent = String(data.prediction || "-").toUpperCase();
+          prediction.className = String(data.prediction || "").toLowerCase();
+          score.textContent = Number(data.decision_score).toFixed(4);
+          threshold.textContent = Number(data.threshold).toFixed(2);
+          resultMessage.textContent = data.message || "The two results are separate decision-support signals.";
+          showEvidenceLoading();
+          openResultPopup();
+          void loadEvidence(value, data.prediction, requestId);
+        } catch (err) {
+          error.textContent = err instanceof Error ? err.message : "Prediction failed.";
+        } finally {
+          predictBtn.disabled = false;
+          predictBtn.textContent = "Run Model Prediction";
+        }
+      }
+
+      predictBtn.addEventListener("click", predict);
+      closeApp.addEventListener("click", closeApplication);
+      window.addEventListener("beforeunload", (event) => {
+        if (allowPageExit) return;
+        event.preventDefault();
+        event.returnValue = "";
+      });
+      window.addEventListener("pagehide", requestBrowserCloseShutdown);
+      text.addEventListener("input", updateTextCount);
+      closeResult.addEventListener("click", closeResultPopup);
+      resultBackdrop.addEventListener("click", (event) => { if (event.target === resultBackdrop) closeResultPopup(); });
+      document.addEventListener("keydown", (event) => { if (event.key === "Escape" && resultBackdrop.classList.contains("visible")) closeResultPopup(); });
+      clearBtn.addEventListener("click", () => { text.value = ""; updateTextCount(); error.textContent = ""; closeResultPopup(); });
+      document.querySelectorAll(".sample").forEach((button) => button.addEventListener("click", () => { text.value = button.dataset.text; updateTextCount(); closeResultPopup(); error.textContent = ""; }));
+      updateTextCount();
+      loadProjectInfo();
+      loadSessionInfo();
+    </script>
+  </body>
+</html>

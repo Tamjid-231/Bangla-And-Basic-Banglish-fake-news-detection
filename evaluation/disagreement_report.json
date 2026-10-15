@@ -1,0 +1,16 @@
+{
+  "evaluation_type": "controlled classifier/evidence disagreement analysis",
+  "total_cases": 30,
+  "comparable_decisive_cases": 15,
+  "indeterminate_evidence_cases": 15,
+  "disagreement_cases": 8,
+  "disagreement_rate_on_comparable_cases": 0.5333333333333333,
+  "disagreement_rate_on_all_cases": 0.26666666666666666,
+  "rq6_presentation_impact": {
+    "binary_only_definitive_outputs": 30,
+    "separated_output_manual_or_unverified_cases": 23,
+    "separated_output_supported_cases": 7,
+    "interpretation": "Separating evidence prevents the interface from presenting every model prediction as an equally strong final conclusion."
+  },
+  "scope_note": "This analysis uses controlled evidence fixtures and the actual saved classifier. It does not measure changing live-search accuracy or user trust."
+}

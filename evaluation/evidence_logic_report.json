@@ -1,0 +1,35 @@
+{
+  "evaluation_type": "controlled evidence decision-logic evaluation",
+  "total_cases": 30,
+  "correct_cases": 30,
+  "accuracy": 1.0,
+  "status_breakdown": {
+    "conflicting_evidence": {
+      "cases": 3,
+      "correct": 3
+    },
+    "fact_checked_false": {
+      "cases": 5,
+      "correct": 5
+    },
+    "fact_checked_true": {
+      "cases": 5,
+      "correct": 5
+    },
+    "limited_evidence": {
+      "cases": 5,
+      "correct": 5
+    },
+    "not_enough_evidence": {
+      "cases": 7,
+      "correct": 7
+    },
+    "supported_by_sources": {
+      "cases": 5,
+      "correct": 5
+    }
+  },
+  "failed_case_ids": [],
+  "four_way_category_accuracy": 1.0,
+  "scope_note": "This controlled test measures source classification, text matching, fact-check priority, and status decisions. It does not measure the changing accuracy or availability of live Google News search results."
+}

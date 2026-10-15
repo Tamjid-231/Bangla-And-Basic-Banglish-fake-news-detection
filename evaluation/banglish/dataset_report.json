@@ -1,0 +1,18 @@
+{
+  "dataset_name": "Controlled Held-out Banglish Evaluation Set",
+  "total_cases": 250,
+  "class_counts": {
+    "fake": 125,
+    "real": 125
+  },
+  "source_dataset": "BanFakeNews-2.0",
+  "source_split": "deterministic held-out 15% test split",
+  "leakage_control": "source headlines are excluded when the same cleaned headline appears in training or validation",
+  "train_headline_overlap": 0,
+  "validation_headline_overlap": 0,
+  "random_state": 42,
+  "label_method": "labels inherited from source headlines",
+  "transliteration_method": "deterministic Bangla-to-Roman transliteration with rule-based mapping and lexical post-editing",
+  "human_validation": false,
+  "scope_note": "This is a controlled derived benchmark. It is not a naturally collected Banglish corpus and must not be described as human-labelled Banglish data."
+}

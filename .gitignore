@@ -1,0 +1,4 @@
+data/All60Kdataset.csv
+__pycache__/
+*.whl
+*.csv

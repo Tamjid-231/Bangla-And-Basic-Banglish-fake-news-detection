@@ -1,0 +1,5 @@
+# Optional dependencies for evaluation/benchmark_banglish.py --run-transformer
+# These are intentionally separate from the offline website requirements.
+torch==2.13.0
+transformers==5.14.1
+sentencepiece==0.2.2
