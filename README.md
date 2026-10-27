@@ -16,7 +16,6 @@ A model prediction is not proof that a real-world claim is true or false, so the
 **University:** Presidency University, Bangladesh  
 **Academic project:** Capstone 2 Final Project
 
-- **Md. Tamjid Hossain** — 231612038
 
 ## What we completed
 
